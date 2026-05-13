@@ -1,5 +1,5 @@
 import json
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -30,5 +30,39 @@ def get_ligne(ligne_id):
         return jsonify({"erreur": "Ligne non trouvee"}), 404
     return jsonify(ligne)
 
+@app.route("/arrets")
+def get_arrets():
+    tous_arrets = []
+    for ligne in lignes:
+        tous_arrets.extend(ligne["listeArrets"])
+    arrets_uniques = list(set(tous_arrets))
+    arrets_uniques.sort()
+    return jsonify(arrets_uniques)
+
+@app.route("/stats")
+def get_stats():
+    total_lignes = len(lignes)
+    total_arrets = sum(l["arrets"] for l in lignes)
+    ligne_max = max(lignes, key=lambda l: l["arrets"])
+    return jsonify({
+        "total_lignes": total_lignes,
+        "total_arrets": total_arrets,
+        "ligne_plus_darrets": {
+            "numero": ligne_max["numero"],
+            "depart": ligne_max["depart"],
+            "arrivee": ligne_max["arrivee"],
+            "arrets": ligne_max["arrets"]
+        }
+    })
+
+@app.route("/lignes/recherche")
+def recherche_lignes():
+    q = request.args.get("q", "")
+    resultats = [
+        l for l in lignes
+        if q.lower() in l["depart"].lower()
+        or q.lower() in l["arrivee"].lower()
+    ]
+    return jsonify(resultats)
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
