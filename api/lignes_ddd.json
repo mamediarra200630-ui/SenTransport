@@ -41,4 +41,21 @@
     "arrets": 11,
     "listeArrets": ["Yoff Village", "Aeroport LSS", "Parcelles U17", "Grand Yoff", "HLM", "Sandaga"]
   }
+  ,
+{
+  "id": 7,
+  "numero": "26",
+  "depart": "Rufisque",
+  "arrivee": "Centenaire",
+  "arrets": 13,
+  "listeArrets": ["Rufisque Gare", "Thiaroye", "Yeumbeul", "Keur Massar", "Pikine", "Centenaire"]
+},
+{
+  "id": 8,
+  "numero": "42",
+  "depart": "Diamniadio",
+  "arrivee": "Petersen",
+  "arrets": 20,
+  "listeArrets": ["Diamniadio", "Mbao", "Thiaroye", "Pikine", "Colobane", "Petersen"]
+}
 ]

@@ -14,7 +14,9 @@ function App() {
   const [ligneSelectionnee, setLigneSelectionnee] = useState(null);
   const [nbRecherches, setNbRecherches] = useState(0);
 
-  useEffect(() => {
+  function chargerLignes() {
+    setChargement(true);
+    setErreur(null);
     fetch("http://localhost:5000/lignes")
       .then(response => {
         if (!response.ok) {
@@ -30,6 +32,10 @@ function App() {
         setErreur(error.message);
         setChargement(false);
       });
+  }
+
+  useEffect(() => {
+    chargerLignes();
   }, []);
 
   const lignesFiltrees = lignes.filter(l =>
@@ -47,11 +53,12 @@ function App() {
     if (ligneSelectionnee && ligneSelectionnee.id === ligne.id) {
       setLigneSelectionnee(null);
     } else {
-      setLigneSelectionnee(ligne);
+      fetch(`http://localhost:5000/lignes/${ligne.id}`)
+        .then(response => response.json())
+        .then(data => setLigneSelectionnee(data));
     }
   }
 
-  // Écran de chargement
   if (chargement) {
     return (
       <div className="App">
@@ -63,7 +70,6 @@ function App() {
     );
   }
 
-  // Écran d'erreur
   if (erreur) {
     return (
       <div className="App">
@@ -73,18 +79,23 @@ function App() {
             <p>Impossible de charger les lignes.</p>
             <p className="erreur-detail">{erreur}</p>
             <p>Vérifiez que le serveur Flask est lancé (python api/app.py).</p>
+            <button className="btn-recharger" onClick={chargerLignes}>
+              🔄 Réessayer
+            </button>
           </div>
         </main>
       </div>
     );
   }
 
-  // Écran normal
   return (
     <div className="App">
       <Header />
       <main className="contenu">
         <Recherche valeur={recherche} onChange={handleRecherche} />
+        <button className="btn-recharger" onClick={chargerLignes}>
+          🔄 Recharger les lignes
+        </button>
         <p className="compteur-recherche">
           🔍 Vous avez effectué {nbRecherches} recherche{nbRecherches > 1 ? 's' : ''}
         </p>
